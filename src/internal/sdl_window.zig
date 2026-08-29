@@ -1,11 +1,11 @@
 const std = @import("std");
 const sdl = @import("sdl");
 
-pub const Window = struct {
+pub const SdlWindow = struct {
     window: *sdl.SDL_Window,
     renderer: *sdl.SDL_Renderer,
 
-    pub fn init(title: [*:0]const u8, width: i32, height: i32) !Window {
+    pub fn init(title: [*:0]const u8, width: i32, height: i32) !SdlWindow {
         if (!sdl.SDL_Init(sdl.SDL_INIT_VIDEO)) {
             std.debug.print("SDL Init Error: {s}\n", .{sdl.SDL_GetError()});
             return error.SDLInitFailed;
@@ -24,29 +24,24 @@ pub const Window = struct {
             return error.RendererCreationFailed;
         };
 
-        return Window{
+        return SdlWindow{
             .window = window,
             .renderer = renderer,
         };
     }
 
-    pub fn deinit(self: *const Window) void {
+    pub fn deinit(self: *const SdlWindow) void {
         sdl.SDL_DestroyRenderer(self.renderer);
         sdl.SDL_DestroyWindow(self.window);
         sdl.SDL_Quit();
     }
 
-    pub fn pollEvent(self: *const Window, event: *sdl.SDL_Event) bool {
-        _ = self;
-        return sdl.SDL_PollEvent(event);
-    }
-
-    pub fn clear(self: *const Window, r: u8, g: u8, b: u8, a: u8) void {
+    pub fn clear(self: *const SdlWindow, r: u8, g: u8, b: u8, a: u8) void {
         _ = sdl.SDL_SetRenderDrawColor(self.renderer, r, g, b, a);
         _ = sdl.SDL_RenderClear(self.renderer);
     }
 
-    pub fn present(self: *const Window) void {
+    pub fn present(self: *const SdlWindow) void {
         _ = sdl.SDL_RenderPresent(self.renderer);
     }
 };

@@ -6,9 +6,13 @@ fn update(delta_time: f32) !void {
 }
 
 fn draw() void {
-    std.debug.print("Draw called\n", .{});
+    crown.window.clear(0, 0, 0, 255);
+    crown.window.present();
 }
 
 pub fn main() !void {
-    try crown.run(update, draw);
+    try crown.run(.{
+        .update = &update,
+        .draw = &draw,
+    });
 }
