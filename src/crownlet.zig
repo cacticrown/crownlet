@@ -1,11 +1,13 @@
 const std = @import("std");
 const sdl = @import("sdl");
 
+pub const graphics = @import("graphics.zig");
 pub const window = @import("window.zig");
 
 pub const Config = struct {
+    init: ?*const fn () anyerror!void = null,
     update: ?*const fn (delta_time: f32) anyerror!void = null,
-    draw: ?*const fn () void = null,
+    draw: ?*const fn () anyerror!void = null,
 };
 
 pub fn run(config: Config) !void {
@@ -16,6 +18,10 @@ pub fn run(config: Config) !void {
 
     const performance_frequency: f32 = @floatFromInt(sdl.SDL_GetPerformanceFrequency());
     var last_time = sdl.SDL_GetPerformanceCounter();
+
+    if (config.init) |init| {
+        try init();
+    }
 
     while (true) {
         const current_time = sdl.SDL_GetPerformanceCounter();
@@ -33,7 +39,7 @@ pub fn run(config: Config) !void {
         }
 
         if (config.draw) |draw| {
-            draw();
+            try draw();
         }
     }
 }

@@ -19,6 +19,7 @@ pub fn build(b: *std.Build) void {
 
     crownlet_mod.addImport("sdl", sdl_mod);
     crownlet_mod.linkSystemLibrary("SDL3", .{});
+    crownlet_mod.linkSystemLibrary("SDL3_image", .{});
 
     const lib = b.addLibrary(.{
         .name = "crownlet",

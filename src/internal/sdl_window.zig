@@ -1,6 +1,8 @@
 const std = @import("std");
 const sdl = @import("sdl");
 
+pub var current: SdlWindow = undefined;
+
 pub const SdlWindow = struct {
     window: *sdl.SDL_Window,
     renderer: *sdl.SDL_Renderer,
