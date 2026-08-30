@@ -9,13 +9,13 @@ fn init() !void {
 }
 
 fn update(delta_time: f32) !void {
-    std.debug.print("Update called with delta time: {d}\n", .{delta_time});
+    _ = delta_time;
 }
 
 fn draw() !void {
-    crown.window.clear(0, 0, 0, 255);
+    try crown.window.clear(0, 0, 0, 255);
     try crown.graphics.drawTexture(player_texture, 100, 100);
-    crown.window.present();
+    try crown.window.present();
 }
 
 pub fn main() !void {

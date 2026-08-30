@@ -11,10 +11,10 @@ pub fn deinit() void {
     internalWindow.current.deinit();
 }
 
-pub fn clear(r: u8, g: u8, b: u8, a: u8) void {
-    internalWindow.current.clear(r, g, b, a);
+pub fn clear(r: u8, g: u8, b: u8, a: u8) !void {
+    try internalWindow.current.clear(r, g, b, a);
 }
 
-pub fn present() void {
-    internalWindow.current.present();
+pub fn present() !void {
+    try internalWindow.current.present();
 }

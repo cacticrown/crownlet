@@ -38,12 +38,21 @@ pub const SdlWindow = struct {
         sdl.SDL_Quit();
     }
 
-    pub fn clear(self: *const SdlWindow, r: u8, g: u8, b: u8, a: u8) void {
-        _ = sdl.SDL_SetRenderDrawColor(self.renderer, r, g, b, a);
-        _ = sdl.SDL_RenderClear(self.renderer);
+    pub fn clear(self: *const SdlWindow, r: u8, g: u8, b: u8, a: u8) !void {
+        if (!sdl.SDL_SetRenderDrawColor(self.renderer, r, g, b, a)) {
+            std.debug.print("SDL_SetRenderDrawColor error: {s}\n", .{sdl.SDL_GetError()});
+            return error.ClearFailed;
+        }
+        if (!sdl.SDL_RenderClear(self.renderer)) {
+            std.debug.print("SDL_RenderClear error: {s}\n", .{sdl.SDL_GetError()});
+            return error.ClearFailed;
+        }
     }
 
-    pub fn present(self: *const SdlWindow) void {
-        _ = sdl.SDL_RenderPresent(self.renderer);
+    pub fn present(self: *const SdlWindow) !void {
+        if (!sdl.SDL_RenderPresent(self.renderer)) {
+            std.debug.print("SDL_RenderPresent error: {s}\n", .{sdl.SDL_GetError()});
+            return error.PresentFailed;
+        }
     }
 };
