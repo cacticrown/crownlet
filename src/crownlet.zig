@@ -9,10 +9,13 @@ pub const Config = struct {
     update: ?*const fn (delta_time: f32) anyerror!void = null,
     draw: ?*const fn () anyerror!void = null,
     shutdown: ?*const fn () anyerror!void = null,
+    width: i32 = 360,
+    height: i32 = 640,
+    window_title: [:0]const u8 = "crownlet",
 };
 
 pub fn run(config: Config) !void {
-    try window.init("Crownlet", 800, 600);
+    try window.init(config.window_title, config.width, config.height);
     defer window.deinit();
 
     var event: sdl.SDL_Event = undefined;

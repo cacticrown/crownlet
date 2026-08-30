@@ -14,7 +14,7 @@ fn update(delta_time: f32) !void {
 
 fn draw() !void {
     try crown.window.clear(0, 0, 0, 255);
-    try crown.graphics.drawTexture(player_texture, 100, 100);
+    try crown.graphics.drawTexture(player_texture, 0, 0);
     try crown.window.present();
 }
 
@@ -28,5 +28,8 @@ pub fn main() !void {
         .update = &update,
         .draw = &draw,
         .shutdown = &shutdown,
+        .height = 320,
+        .width = 320,
+        .window_title = "test",
     });
 }
