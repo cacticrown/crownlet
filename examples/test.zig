@@ -18,10 +18,15 @@ fn draw() !void {
     try crown.window.present();
 }
 
+fn shutdown() !void {
+    player_texture.deinit();
+}
+
 pub fn main() !void {
     try crown.run(.{
         .init = &init,
         .update = &update,
         .draw = &draw,
+        .shutdown = &shutdown,
     });
 }

@@ -8,6 +8,7 @@ pub const Config = struct {
     init: ?*const fn () anyerror!void = null,
     update: ?*const fn (delta_time: f32) anyerror!void = null,
     draw: ?*const fn () anyerror!void = null,
+    shutdown: ?*const fn () anyerror!void = null,
 };
 
 pub fn run(config: Config) !void {
@@ -30,6 +31,9 @@ pub fn run(config: Config) !void {
 
         while (sdl.SDL_PollEvent(&event)) {
             if (event.type == sdl.SDL_EVENT_QUIT) {
+                if (config.shutdown) |shutdown| {
+                    try shutdown();
+                }
                 return;
             }
         }
