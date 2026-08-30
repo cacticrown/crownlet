@@ -1,5 +1,6 @@
 const std = @import("std");
 const sdl = @import("sdl");
+const crown = @import("crownlet");
 
 const internalWindow = @import("internal/sdl_window.zig");
 
@@ -11,8 +12,8 @@ pub fn deinit() void {
     internalWindow.current.deinit();
 }
 
-pub fn clear(r: u8, g: u8, b: u8, a: u8) !void {
-    try internalWindow.current.clear(r, g, b, a);
+pub fn clear(color: crown.graphics.Color) !void {
+    try internalWindow.current.clear(color);
 }
 
 pub fn present() !void {

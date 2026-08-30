@@ -2,7 +2,8 @@ const internalWindow = @import("internal/sdl_window.zig");
 const sdl = @import("sdl");
 const std = @import("std");
 
-pub const Texture = @import("texture.zig").Texture;
+pub const Texture = @import("graphics/texture.zig").Texture;
+pub const Color = @import("graphics/color.zig").Color;
 
 pub fn loadTexture(bytes: []const u8) !Texture {
     const renderer = internalWindow.current.renderer;

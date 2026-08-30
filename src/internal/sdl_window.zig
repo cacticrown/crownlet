@@ -1,5 +1,6 @@
 const std = @import("std");
 const sdl = @import("sdl");
+const crown = @import("crownlet");
 
 pub var current: SdlWindow = undefined;
 
@@ -38,8 +39,8 @@ pub const SdlWindow = struct {
         sdl.SDL_Quit();
     }
 
-    pub fn clear(self: *const SdlWindow, r: u8, g: u8, b: u8, a: u8) !void {
-        if (!sdl.SDL_SetRenderDrawColor(self.renderer, r, g, b, a)) {
+    pub fn clear(self: *const SdlWindow, color: crown.graphics.Color) !void {
+        if (!sdl.SDL_SetRenderDrawColor(self.renderer, color.r, color.g, color.b, color.a)) {
             std.debug.print("SDL_SetRenderDrawColor error: {s}\n", .{sdl.SDL_GetError()});
             return error.ClearFailed;
         }

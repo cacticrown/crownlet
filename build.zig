@@ -17,6 +17,8 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    crownlet_mod.addImport("crownlet", crownlet_mod);
+
     crownlet_mod.addImport("sdl", sdl_mod);
     crownlet_mod.linkSystemLibrary("SDL3", .{});
     crownlet_mod.linkSystemLibrary("SDL3_image", .{});
