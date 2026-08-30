@@ -10,6 +10,13 @@ fn init() !void {
 
 fn update(delta_time: f32) !void {
     _ = delta_time;
+    if (crown.input.keyboard.keyJustPressed(.space)) {
+        std.debug.print("space!\n", .{});
+    }
+    if (crown.input.mouse.buttonJustPressed(.left)) {
+        std.debug.print("left mouse button!\n", .{});
+    }
+    // std.debug.print("mouse x: {d}, y: {d}\n", .{ crown.input.mouse.x, crown.input.mouse.y });
 }
 
 fn draw() !void {
