@@ -4,24 +4,26 @@ const crown = @import("crownlet");
 const player_png = @embedFile("player.png");
 var player_texture: crown.graphics.Texture = undefined;
 
+var player_x: f32 = 0;
+const player_speed = 180;
+
 fn init() !void {
     player_texture = try crown.graphics.loadTexture(player_png);
 }
 
 fn update(delta_time: f32) !void {
-    if (crown.input.keyboard.keyJustPressed(.space)) {
-        std.debug.print("space!\n", .{});
+    if (crown.input.keyboard.keyPressed(.left)) {
+        player_x -= player_speed * delta_time;
     }
-    if (crown.input.mouse.buttonJustPressed(.left)) {
-        std.debug.print("left mouse button!\n", .{});
+    if (crown.input.keyboard.keyPressed(.right)) {
+        player_x += player_speed * delta_time;
     }
-    std.debug.print("dt: {d}\n", .{delta_time});
 }
 
 fn draw() !void {
-    try crown.window.clear(crown.graphics.Color.black);
-    try crown.graphics.drawTexture(player_texture, 0, 0);
-    try crown.window.present();
+    try crown.graphics.clear(crown.graphics.Color.black);
+    try crown.graphics.drawTexture(player_texture, player_x, 0);
+    try crown.graphics.present();
 }
 
 fn shutdown() !void {
@@ -34,8 +36,8 @@ pub fn main() !void {
         .update = &update,
         .draw = &draw,
         .shutdown = &shutdown,
-        .height = 320,
-        .width = 320,
+        .height = 360,
+        .width = 640,
         .window_title = "test",
     });
 }

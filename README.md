@@ -6,11 +6,11 @@
 const std = @import("std");
 const crown = @import("crownlet");
 
-const player_png = @embedFile("player.png");
-var player_texture: crown.graphics.Texture = undefined;
+const png = @embedFile("player.png");
+var texture: crown.graphics.Texture = undefined;
 
 fn init() !void {
-    player_texture = try crown.graphics.loadTexture(player_png);
+    texture = try crown.graphics.loadTexture(png);
 }
 
 fn update(delta_time: f32) !void {
@@ -18,13 +18,13 @@ fn update(delta_time: f32) !void {
 }
 
 fn draw() !void {
-    try crown.window.clear(0, 0, 0, 255);
-    try crown.graphics.drawTexture(player_texture, 100, 100);
-    try crown.window.present();
+    try crown.graphics.clear(crown.graphics.Color.black);
+    try crown.graphics.drawTexture(texture, 0, 0);
+    try crown.graphics.present();
 }
 
 fn shutdown() !void {
-    player_texture.deinit();
+    texture.deinit();
 }
 
 pub fn main() !void {

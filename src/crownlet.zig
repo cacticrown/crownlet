@@ -1,8 +1,6 @@
 const std = @import("std");
 const sdl = @import("sdl");
 
-const internalWindow = @import("internal/sdl_window.zig");
-
 pub const graphics = @import("graphics/graphics.zig");
 pub const window = @import("window.zig");
 pub const input = @import("input/input.zig");
@@ -12,8 +10,8 @@ pub const Config = struct {
     update: ?*const fn (delta_time: f32) anyerror!void = null,
     draw: ?*const fn () anyerror!void = null,
     shutdown: ?*const fn () anyerror!void = null,
-    width: i32 = 360,
-    height: i32 = 640,
+    width: i32 = 640,
+    height: i32 = 360,
     window_title: [:0]const u8 = "crownlet",
     target_fps: u32 = 60, // 0 = uncapped
     vsync: bool = true,
@@ -23,11 +21,10 @@ pub fn run(config: Config) !void {
     try window.init(config.window_title, config.width, config.height);
     defer window.deinit();
 
-    if (config.vsync) {
-        if (!sdl.SDL_SetRenderVSync(internalWindow.current.renderer, 1)) {
-            return error.EnablingVSyncFailed;
-        }
-    }
+    try graphics.init();
+    defer graphics.deinit();
+
+    try graphics.setVSync(config.vsync);
 
     var event: sdl.SDL_Event = undefined;
 
@@ -53,6 +50,7 @@ pub fn run(config: Config) !void {
         }
 
         input.update();
+
         if (config.update) |update| {
             try update(delta_time);
         }
