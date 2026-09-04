@@ -20,7 +20,7 @@ fn update(delta_time: f32) !void {
 }
 
 fn draw() !void {
-    try crown.window.clear(crown.graphics.Color.init(0, 0, 0, 255));
+    try crown.window.clear(crown.graphics.Color.black);
     try crown.graphics.drawTexture(player_texture, 0, 0);
     try crown.window.present();
 }
