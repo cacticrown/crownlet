@@ -56,9 +56,4 @@ const crownlet_dep = b.dependency("crownlet", .{
 exe.root_module.addImport("crownlet", crownlet_dep.module("crownlet"));
 ```
 
-Then import it in your code:
-
-```zig
-const crown = @import("crownlet");
-```
 See this [example repository](https://github.com/cacticrown/crownlet-example) for more details.
