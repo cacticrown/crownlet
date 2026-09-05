@@ -20,8 +20,23 @@ pub fn build(b: *std.Build) void {
     crownlet_mod.addImport("crownlet", crownlet_mod);
 
     crownlet_mod.addImport("sdl", sdl_mod);
-    crownlet_mod.linkSystemLibrary("SDL3", .{});
-    crownlet_mod.linkSystemLibrary("SDL3_image", .{});
+    const sdl_dep = b.dependency("sdl3", .{
+        .target = target,
+        .optimize = optimize,
+    });
+    const sdl_image_dep = b.dependency("sdl3_image", .{
+        .target = target,
+        .optimize = optimize,
+    });
+
+    const sdl_lib = sdl_dep.artifact("SDL3");
+    const sdl_image_lib = sdl_image_dep.artifact("SDL3_image");
+
+    translate_c.addIncludePath(sdl_lib.getEmittedIncludeTree());
+    translate_c.addIncludePath(sdl_image_lib.getEmittedIncludeTree());
+
+    crownlet_mod.linkLibrary(sdl_lib);
+    crownlet_mod.linkLibrary(sdl_image_lib);
 
     const lib = b.addLibrary(.{
         .name = "crownlet",

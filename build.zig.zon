@@ -4,7 +4,16 @@
     .fingerprint = 0x2737a0d071f9e499, // Changing this has security and trust implications.
     .minimum_zig_version = "0.16.0",
 
-    .dependencies = .{},
+    .dependencies = .{
+        .sdl3 = .{
+            .url = "git+https://github.com/allyourcodebase/SDL#5d74fc4ba994547f7f2f77695c2f301298310d4d",
+            .hash = "sdl-1.0.2+3.4.14-i4QD0SawqQBSVdA6eHm0lX16h_Jwf1vQXxI_lO0-09sY",
+        },
+        .sdl3_image = .{
+            .url = "git+https://github.com/allyourcodebase/SDL_image#bdb1b2d088850503c272c83592d9dc2f856114c9",
+            .hash = "SDL_image-3.4.4--aJoHV4dAACr0MEgyGAU5lU02_t-Dp2QBXjs0lzwcEEU",
+        },
+    },
 
     .paths = .{
         "build.zig",
