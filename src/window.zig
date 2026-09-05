@@ -14,3 +14,21 @@ pub fn init(title: [:0]const u8, width: i32, height: i32) !void {
 pub fn deinit() void {
     sdl.SDL_DestroyWindow(state.window);
 }
+
+pub fn setFullscreen(value: bool) !void {
+    if (!sdl.SDL_SetWindowFullscreen(state.window, value)) {
+        std.debug.print("Setting Fullscreen failed: {s}\n", .{sdl.SDL_GetError()});
+        return error.SettingFullscreenFailed;
+    }
+}
+
+pub fn isFullscreen() bool {
+    const flags = sdl.SDL_GetWindowFlags(state.window);
+
+    return (flags & sdl.SDL_WINDOW_FULLSCREEN) != 0;
+}
+
+pub fn toggleFullscreen() !void {
+    const fullscreen = isFullscreen();
+    try setFullscreen(!fullscreen);
+}

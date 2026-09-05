@@ -12,6 +12,7 @@ pub const Config = struct {
     shutdown: ?*const fn () anyerror!void = null,
     width: i32 = 640,
     height: i32 = 360,
+    fullscreen: bool = false,
     window_title: [:0]const u8 = "crownlet",
     target_fps: u32 = 60, // 0 = uncapped
     vsync: bool = true,
@@ -25,6 +26,7 @@ pub fn run(config: Config) !void {
     defer graphics.deinit();
 
     try graphics.setVSync(config.vsync);
+    try window.setFullscreen(config.fullscreen);
 
     var event: sdl.SDL_Event = undefined;
 

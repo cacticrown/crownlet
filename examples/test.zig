@@ -18,6 +18,10 @@ fn update(delta_time: f32) !void {
     if (crown.input.keyboard.keyPressed(.right)) {
         player_x += player_speed * delta_time;
     }
+
+    if (crown.input.keyboard.keyJustPressed(.f11)) {
+        try crown.window.toggleFullscreen();
+    }
 }
 
 fn draw() !void {
