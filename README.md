@@ -36,3 +36,29 @@ pub fn main() !void {
     });
 }
 ```
+
+## Getting started
+
+Fetch and save crownlet to your `build.zig.zon` by running this command:
+
+```bash
+zig fetch --save=crownlet git+https://github.com/cacticrown/crownlet.git
+```
+
+Then in your `build.zig`, add the dependency and import the `crownlet` module into whatever module/executable needs it:
+
+```zig
+const crownlet_dep = b.dependency("crownlet", .{
+    .target = target,
+    .optimize = optimize,
+});
+
+exe.root_module.addImport("crownlet", crownlet_dep.module("crownlet"));
+```
+
+Then import it in your code:
+
+```zig
+const crown = @import("crownlet");
+```
+See this [example repository](https://github.com/cacticrown/crownlet-example) for more details.
