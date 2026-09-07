@@ -53,6 +53,7 @@ pub fn build(b: *std.Build) void {
         path: []const u8,
     }{
         .{ .name = "test", .path = "examples/test.zig" },
+        .{ .name = "example", .path = "examples/example.zig" },
     };
 
     for (examples) |example| {

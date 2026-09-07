@@ -2,21 +2,23 @@ const std = @import("std");
 const crown = @import("crownlet");
 
 const player_png = @embedFile("player.png");
-var player_texture: crown.graphics.Texture = undefined;
-
-var player_x: f32 = 0;
 const player_speed = 180;
 
-fn init() !void {
-    player_texture = try crown.graphics.loadTexture(player_png);
+const Game = struct {
+    player_texture: crown.graphics.Texture = undefined,
+    player_x: f32 = 0,
+};
+
+fn init(game: *Game) !void {
+    game.player_texture = try crown.graphics.loadTexture(player_png);
 }
 
-fn update(delta_time: f32) !void {
+fn update(game: *Game, delta_time: f32) !void {
     if (crown.input.keyboard.keyPressed(.left)) {
-        player_x -= player_speed * delta_time;
+        game.player_x -= player_speed * delta_time;
     }
     if (crown.input.keyboard.keyPressed(.right)) {
-        player_x += player_speed * delta_time;
+        game.player_x += player_speed * delta_time;
     }
 
     if (crown.input.keyboard.keyJustPressed(.f11)) {
@@ -24,18 +26,20 @@ fn update(delta_time: f32) !void {
     }
 }
 
-fn draw() !void {
+fn draw(game: *Game) !void {
     try crown.graphics.clear(crown.graphics.Color.black);
-    try crown.graphics.drawTexture(player_texture, player_x, 0);
+    try crown.graphics.drawTexture(game.player_texture, game.player_x, 0);
     try crown.graphics.present();
 }
 
-fn shutdown() !void {
-    player_texture.deinit();
+fn shutdown(game: *Game) !void {
+    game.player_texture.deinit();
 }
 
 pub fn main() !void {
-    try crown.run(.{
+    var game = Game{};
+
+    try crown.run(&game, .{
         .init = &init,
         .update = &update,
         .draw = &draw,

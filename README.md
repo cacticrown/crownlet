@@ -3,36 +3,38 @@
 
 ## Example
 ``` zig
-const std = @import("std");
 const crown = @import("crownlet");
 
-const png = @embedFile("player.png");
-var texture: crown.graphics.Texture = undefined;
+const Game = struct {};
 
-fn init() !void {
-    texture = try crown.graphics.loadTexture(png);
+fn init(game: *Game) !void {
+    _ = game;
 }
 
-fn update(delta_time: f32) !void {
+fn update(game: *Game, delta_time: f32) !void {
+    _ = game;
     _ = delta_time;
 }
 
-fn draw() !void {
+fn draw(game: *Game) !void {
+    _ = game;
     try crown.graphics.clear(crown.graphics.Color.black);
-    try crown.graphics.drawTexture(texture, 0, 0);
     try crown.graphics.present();
 }
 
-fn shutdown() !void {
-    texture.deinit();
+fn shutdown(game: *Game) !void {
+    _ = game;
 }
 
 pub fn main() !void {
-    try crown.run(.{
+    var game = Game{};
+
+    try crown.run(&game, .{
         .init = &init,
         .update = &update,
         .draw = &draw,
         .shutdown = &shutdown,
+        .window_title = "example",
     });
 }
 ```

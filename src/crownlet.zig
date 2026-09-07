@@ -5,20 +5,22 @@ pub const graphics = @import("graphics/graphics.zig");
 pub const window = @import("window.zig");
 pub const input = @import("input/input.zig");
 
-pub const Config = struct {
-    init: ?*const fn () anyerror!void = null,
-    update: ?*const fn (delta_time: f32) anyerror!void = null,
-    draw: ?*const fn () anyerror!void = null,
-    shutdown: ?*const fn () anyerror!void = null,
-    width: i32 = 640,
-    height: i32 = 360,
-    fullscreen: bool = false,
-    window_title: [:0]const u8 = "crownlet",
-    target_fps: u32 = 60, // 0 = uncapped
-    vsync: bool = true,
-};
+pub fn Config(comptime Context: type) type {
+    return struct {
+        init: ?*const fn (ctx: *Context) anyerror!void = null,
+        update: ?*const fn (ctx: *Context, delta_time: f32) anyerror!void = null,
+        draw: ?*const fn (ctx: *Context) anyerror!void = null,
+        shutdown: ?*const fn (ctx: *Context) anyerror!void = null,
+        width: i32 = 640,
+        height: i32 = 360,
+        fullscreen: bool = false,
+        window_title: [:0]const u8 = "crownlet",
+        target_fps: u32 = 60, // 0 = uncapped
+        vsync: bool = true,
+    };
+}
 
-pub fn run(config: Config) !void {
+pub fn run(context: anytype, config: Config(@TypeOf(context.*))) !void {
     try window.init(config.window_title, config.width, config.height);
     defer window.deinit();
 
@@ -34,7 +36,7 @@ pub fn run(config: Config) !void {
     var last_time = sdl.SDL_GetPerformanceCounter();
 
     if (config.init) |init| {
-        try init();
+        try init(context);
     }
 
     while (true) {
@@ -45,7 +47,7 @@ pub fn run(config: Config) !void {
         while (sdl.SDL_PollEvent(&event)) {
             if (event.type == sdl.SDL_EVENT_QUIT) {
                 if (config.shutdown) |shutdown| {
-                    try shutdown();
+                    try shutdown(context);
                 }
                 return;
             }
@@ -54,11 +56,11 @@ pub fn run(config: Config) !void {
         input.update();
 
         if (config.update) |update| {
-            try update(delta_time);
+            try update(context, delta_time);
         }
 
         if (config.draw) |draw| {
-            try draw();
+            try draw(context);
         }
 
         if (config.target_fps > 0 and !config.vsync) {
