@@ -6,7 +6,7 @@ pub const Texture = struct {
 
     pub fn init(renderer: *sdl.SDL_Renderer, width: i32, height: i32) !Texture {
         const texture = sdl.SDL_CreateTexture(renderer, width, height) orelse {
-            std.debug.print("Texture Error: {s}\n", .{sdl.SDL_GetError()});
+            std.debug.print("Texture Creation failed: {s}\n", .{sdl.SDL_GetError()});
             return error.TextureCreationFailed;
         };
 
@@ -17,13 +17,13 @@ pub const Texture = struct {
 
     pub fn fromBytes(renderer: *sdl.SDL_Renderer, bytes: []const u8) !Texture {
         const stream = sdl.SDL_IOFromConstMem(bytes.ptr, bytes.len) orelse {
-            std.debug.print("IOStream Error: {s}\n", .{sdl.SDL_GetError()});
+            std.debug.print("IOStream Creation Failed: {s}\n", .{sdl.SDL_GetError()});
             return error.IOStreamCreationFailed;
         };
 
         const texture = sdl.IMG_LoadTexture_IO(renderer, stream, true) orelse {
-            std.debug.print("Texture Load Error: {s}\n", .{sdl.SDL_GetError()});
-            return error.TextureLoadFailed;
+            std.debug.print("Texture Loading failed: {s}\n", .{sdl.SDL_GetError()});
+            return error.TextureLoadingFailed;
         };
 
         return Texture{
