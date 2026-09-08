@@ -7,10 +7,10 @@ pub const input = @import("input/input.zig");
 
 pub fn Config(comptime Context: type) type {
     return struct {
-        init: ?*const fn (ctx: *Context) anyerror!void = null,
-        update: ?*const fn (ctx: *Context, delta_time: f32) anyerror!void = null,
-        draw: ?*const fn (ctx: *Context) anyerror!void = null,
-        shutdown: ?*const fn (ctx: *Context) anyerror!void = null,
+        init: ?*const fn (context: *Context) anyerror!void = null,
+        update: ?*const fn (context: *Context, delta_time: f32) anyerror!void = null,
+        draw: ?*const fn (context: *Context) anyerror!void = null,
+        shutdown: ?*const fn (context: *Context) anyerror!void = null,
         width: i32 = 640,
         height: i32 = 360,
         fullscreen: bool = false,
