@@ -20,7 +20,7 @@ pub fn Config(comptime Context: type) type {
     };
 }
 
-pub fn run(context: anytype, config: Config(@TypeOf(context.*))) !void {
+pub fn run(context: anytype, comptime config: Config(@TypeOf(context.*))) !void {
     try window.init(config.window_title, config.width, config.height);
     defer window.deinit();
 
