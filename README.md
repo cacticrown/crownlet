@@ -44,7 +44,7 @@ pub fn main() !void {
 Fetch and save crownlet to your `build.zig.zon` by running this command:
 
 ```bash
-zig fetch --save=crownlet git+https://github.com/cacticrown/crownlet.git
+zig fetch --save git+https://github.com/cacticrown/crownlet
 ```
 
 Then in your `build.zig`, add the dependency and import the `crownlet` module into whatever module/executable needs it:
