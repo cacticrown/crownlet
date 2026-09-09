@@ -52,14 +52,14 @@ pub fn loadTexture(bytes: []const u8) !Texture {
     return Texture.fromBytes(renderer, bytes);
 }
 
-pub fn drawTexture(texture: Texture, x: f32, y: f32) !void {
+pub fn drawTexture(texture: Texture, position: crown.math.Vector2) !void {
     const renderer = state.renderer;
 
     var w: f32 = undefined;
     var h: f32 = undefined;
     _ = sdl.SDL_GetTextureSize(texture.texture, &w, &h);
 
-    const dst = sdl.SDL_FRect{ .x = x, .y = y, .w = w, .h = h };
+    const dst = sdl.SDL_FRect{ .x = position.x, .y = position.y, .w = w, .h = h };
 
     if (!sdl.SDL_RenderTexture(renderer, texture.texture, null, &dst)) {
         std.debug.print("RenderTexture Error: {s}\n", .{sdl.SDL_GetError()});

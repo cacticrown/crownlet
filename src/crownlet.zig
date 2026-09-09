@@ -4,6 +4,7 @@ const sdl = @import("sdl");
 pub const graphics = @import("graphics/graphics.zig");
 pub const window = @import("window.zig");
 pub const input = @import("input/input.zig");
+pub const math = @import("math/math.zig");
 
 pub fn Config(comptime Context: type) type {
     return struct {

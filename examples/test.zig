@@ -6,7 +6,7 @@ const player_speed = 180;
 
 const Game = struct {
     player_texture: crown.graphics.Texture = undefined,
-    player_x: f32 = 0,
+    player_position: crown.math.Vector2 = .init(0, 0),
 };
 
 fn init(game: *Game) !void {
@@ -15,10 +15,10 @@ fn init(game: *Game) !void {
 
 fn update(game: *Game, delta_time: f32) !void {
     if (crown.input.keyboard.keyPressed(.left)) {
-        game.player_x -= player_speed * delta_time;
+        game.player_position.x -= player_speed * delta_time;
     }
     if (crown.input.keyboard.keyPressed(.right)) {
-        game.player_x += player_speed * delta_time;
+        game.player_position.x += player_speed * delta_time;
     }
 
     if (crown.input.keyboard.keyJustPressed(.f11)) {
@@ -28,7 +28,7 @@ fn update(game: *Game, delta_time: f32) !void {
 
 fn draw(game: *Game) !void {
     try crown.graphics.clear(crown.graphics.Color.black);
-    try crown.graphics.drawTexture(game.player_texture, game.player_x, 0);
+    try crown.graphics.drawTexture(game.player_texture, game.player_position);
     try crown.graphics.present();
 }
 
