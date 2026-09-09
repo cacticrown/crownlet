@@ -47,9 +47,14 @@ pub fn setVSync(value: bool) !void {
     }
 }
 
-pub fn loadTexture(bytes: []const u8) !Texture {
+pub fn loadTextureFromBytes(bytes: []const u8) !Texture {
     const renderer = state.renderer;
     return Texture.fromBytes(renderer, bytes);
+}
+
+pub fn loadTextureFromFile(path: [*:0]const u8) !Texture {
+    const renderer = state.renderer;
+    return Texture.fromFile(renderer, path);
 }
 
 pub fn drawTexture(texture: Texture, position: crown.math.Vector2) !void {
