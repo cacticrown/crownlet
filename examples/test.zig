@@ -63,5 +63,6 @@ pub fn main() !void {
         .height = 360,
         .width = 640,
         .window_title = "test",
+        .resizeable = true,
     });
 }

@@ -15,6 +15,13 @@ pub fn deinit() void {
     sdl.SDL_DestroyWindow(state.window);
 }
 
+pub fn setResizeable(value: bool) !void {
+    if (!sdl.SDL_SetWindowResizable(state.window, value)) {
+        std.debug.print("Setting Resizeable failed: {s}\n", .{sdl.SDL_GetError()});
+        return error.SettingResizeableFailed;
+    }
+}
+
 pub fn setFullscreen(value: bool) !void {
     if (!sdl.SDL_SetWindowFullscreen(state.window, value)) {
         std.debug.print("Setting Fullscreen failed: {s}\n", .{sdl.SDL_GetError()});
