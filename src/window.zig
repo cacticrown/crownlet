@@ -18,7 +18,7 @@ pub fn deinit() void {
 pub fn setResizeable(value: bool) !void {
     if (!sdl.SDL_SetWindowResizable(state.window, value)) {
         std.debug.print("Setting Resizeable failed: {s}\n", .{sdl.SDL_GetError()});
-        return error.SettingResizeableFailed;
+        return error.ResizeFailed;
     }
 }
 
