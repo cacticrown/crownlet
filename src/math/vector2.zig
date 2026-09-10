@@ -87,7 +87,7 @@ test "Vector2 dot product" {
     const b = Vector2.init(4.0, -1.0);
 
     const result = a.dot(b);
-    try std.testing.expectEqual(@as(f32, 5.0), result); // (2*4) + (3*-1) = 8 - 3 = 5
+    try std.testing.expectEqual(@as(f32, 5.0), result);
 }
 
 test "Vector2 length and lengthSq" {
@@ -101,12 +101,10 @@ test "Vector2 normalize" {
     const v = Vector2.init(3.0, 4.0);
     const norm = v.normalize();
 
-    // Use expectApproxEqAbs due to potential floating point inaccuracies
     try std.testing.expectApproxEqAbs(@as(f32, 0.6), norm.x, 0.0001);
     try std.testing.expectApproxEqAbs(@as(f32, 0.8), norm.y, 0.0001);
     try std.testing.expectApproxEqAbs(@as(f32, 1.0), norm.length(), 0.0001);
 
-    // Test zero vector edge case
     const zero = Vector2.init(0.0, 0.0);
     const norm_zero = zero.normalize();
     try std.testing.expectEqual(@as(f32, 0.0), norm_zero.x);
