@@ -5,7 +5,7 @@ pub const Texture = struct {
     texture: *sdl.SDL_Texture,
 
     pub fn init(renderer: *sdl.SDL_Renderer, width: i32, height: i32) !Texture {
-        const texture = sdl.SDL_CreateTexture(renderer, width, height) orelse {
+        const texture = sdl.SDL_CreateTexture(renderer, sdl.SDL_PIXELFORMAT_RGBA8888, sdl.SDL_TEXTUREACCESS_STATIC, width, height) orelse {
             std.debug.print("Texture Creation failed: {s}\n", .{sdl.SDL_GetError()});
             return error.TextureCreationFailed;
         };
