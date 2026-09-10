@@ -15,6 +15,17 @@ pub const Texture = struct {
         };
     }
 
+    pub fn fromFile(renderer: *sdl.SDL_Renderer, path: [*:0]const u8) !Texture {
+        const texture = sdl.IMG_LoadTexture(renderer, path) orelse {
+            std.debug.print("Texture Loading failed: {s}\n", .{sdl.SDL_GetError()});
+            return error.TextureLoadingFailed;
+        };
+
+        return Texture{
+            .texture = texture,
+        };
+    }
+
     pub fn fromBytes(renderer: *sdl.SDL_Renderer, bytes: []const u8) !Texture {
         const stream = sdl.SDL_IOFromConstMem(bytes.ptr, bytes.len) orelse {
             std.debug.print("IOStream Creation Failed: {s}\n", .{sdl.SDL_GetError()});

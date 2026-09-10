@@ -10,7 +10,8 @@ const Game = struct {
 };
 
 fn init(game: *Game) !void {
-    game.player_texture = try crown.graphics.loadTexture(player_png);
+    game.player_texture = try crown.graphics.loadTextureFromBytes(player_png);
+    // game.player_texture = try crown.graphics.loadTextureFromFile("/home/cacti/dev/crownlet/examples/player.png");
 }
 
 fn update(game: *Game, delta_time: f32) !void {
