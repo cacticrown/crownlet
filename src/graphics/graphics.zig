@@ -5,6 +5,7 @@ const crown = @import("crownlet");
 const state = @import("../internal/state.zig");
 
 pub const Texture = @import("texture.zig").Texture;
+pub const RenderTarget = @import("render_target.zig").RenderTarget;
 pub const Color = @import("color.zig").Color;
 
 pub fn init() !void {
@@ -47,27 +48,49 @@ pub fn setVSync(value: bool) !void {
     }
 }
 
+pub fn createRenderTarget(width: i32, height: i32) !RenderTarget {
+    return RenderTarget.init(state.renderer, width, height);
+}
+
+pub fn createTexture(width: i32, height: i32) !Texture {
+    return Texture.init(state.renderer, width, height);
+}
+
 pub fn loadTextureFromBytes(bytes: []const u8) !Texture {
-    const renderer = state.renderer;
-    return Texture.fromBytes(renderer, bytes);
+    return Texture.fromBytes(state.renderer, bytes);
 }
 
 pub fn loadTextureFromFile(path: [*:0]const u8) !Texture {
-    const renderer = state.renderer;
-    return Texture.fromFile(renderer, path);
+    return Texture.fromFile(state.renderer, path);
 }
 
 pub fn drawTexture(texture: Texture, position: crown.math.Vector2) !void {
+    try drawSdlTexture(texture.texture, position);
+}
+
+pub fn drawRenderTarget(renderTarget: RenderTarget, position: crown.math.Vector2) !void {
+    try drawSdlTexture(renderTarget.texture, position);
+}
+
+fn drawSdlTexture(texture: *sdl.SDL_Texture, position: crown.math.Vector2) !void {
     const renderer = state.renderer;
 
     var w: f32 = undefined;
     var h: f32 = undefined;
-    _ = sdl.SDL_GetTextureSize(texture.texture, &w, &h);
+    _ = sdl.SDL_GetTextureSize(texture, &w, &h);
 
     const dst = sdl.SDL_FRect{ .x = position.x, .y = position.y, .w = w, .h = h };
 
-    if (!sdl.SDL_RenderTexture(renderer, texture.texture, null, &dst)) {
-        std.debug.print("RenderTexture Error: {s}\n", .{sdl.SDL_GetError()});
+    if (!sdl.SDL_RenderTexture(renderer, texture, null, &dst)) {
+        std.debug.print("Rendering Texture failed: {s}\n", .{sdl.SDL_GetError()});
         return error.RenderTextureFailed;
+    }
+}
+
+pub fn setRenderTarget(target: ?RenderTarget) !void {
+    const tex_ptr = if (target) |t| t.texture else null;
+    if (!sdl.SDL_SetRenderTarget(state.renderer, tex_ptr)) {
+        std.debug.print("Setting RenderTarget failed: {s}\n", .{sdl.SDL_GetError()});
+        return error.SetRenderTargetFailed;
     }
 }

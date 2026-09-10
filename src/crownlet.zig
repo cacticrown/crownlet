@@ -14,6 +14,7 @@ pub fn Config(comptime Context: type) type {
         shutdown: ?*const fn (context: *Context) anyerror!void = null,
         width: i32 = 640,
         height: i32 = 360,
+        resizeable: bool = false,
         fullscreen: bool = false,
         window_title: [:0]const u8 = "crownlet",
         target_fps: u32 = 60, // 0 = uncapped
@@ -30,6 +31,7 @@ pub fn run(context: anytype, comptime config: Config(@TypeOf(context.*))) !void 
 
     try graphics.setVSync(config.vsync);
     try window.setFullscreen(config.fullscreen);
+    try window.setResizeable(config.resizeable);
 
     var event: sdl.SDL_Event = undefined;
 

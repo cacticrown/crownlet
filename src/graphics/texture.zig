@@ -5,7 +5,7 @@ pub const Texture = struct {
     texture: *sdl.SDL_Texture,
 
     pub fn init(renderer: *sdl.SDL_Renderer, width: i32, height: i32) !Texture {
-        const texture = sdl.SDL_CreateTexture(renderer, width, height) orelse {
+        const texture = sdl.SDL_CreateTexture(renderer, sdl.SDL_PIXELFORMAT_RGBA8888, sdl.SDL_TEXTUREACCESS_STATIC, width, height) orelse {
             std.debug.print("Texture Creation failed: {s}\n", .{sdl.SDL_GetError()});
             return error.TextureCreationFailed;
         };
@@ -44,5 +44,17 @@ pub const Texture = struct {
 
     pub fn deinit(self: *const Texture) void {
         sdl.SDL_DestroyTexture(self.texture);
+    }
+
+    pub fn getSize(self: *const Texture) !struct { width: i32, height: i32 } {
+        var width: f32 = undefined;
+        var height: f32 = undefined;
+        if (!sdl.SDL_GetTextureSize(self.texture, &width, &height)) {
+            return error.GettingTextureSizeFailed;
+        }
+        return .{
+            .width = @as(i32, @intFromFloat(width)),
+            .height = @as(i32, @intFromFloat(height)),
+        };
     }
 };
