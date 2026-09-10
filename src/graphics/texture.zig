@@ -45,4 +45,16 @@ pub const Texture = struct {
     pub fn deinit(self: *const Texture) void {
         sdl.SDL_DestroyTexture(self.texture);
     }
+
+    pub fn getSize(self: *const Texture) !struct { width: i32, height: i32 } {
+        var width: f32 = undefined;
+        var height: f32 = undefined;
+        if (!sdl.SDL_GetTextureSize(self.texture, &width, &height)) {
+            return error.GettingTextureSizeFailed;
+        }
+        return .{
+            .width = @as(i32, @intFromFloat(width)),
+            .height = @as(i32, @intFromFloat(height)),
+        };
+    }
 };

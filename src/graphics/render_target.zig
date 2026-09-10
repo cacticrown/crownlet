@@ -18,4 +18,16 @@ pub const RenderTarget = struct {
     pub fn deinit(self: *const RenderTarget) void {
         sdl.SDL_DestroyTexture(self.texture);
     }
+
+    pub fn getSize(self: *const RenderTarget) !type {
+        var width: f32 = undefined;
+        var height: f32 = undefined;
+        if (!sdl.SDL_GetTextureSize(self, &width, &height)) {
+            return error.GettingTextureSizeFailed;
+        }
+        return .{
+            .width = width,
+            .height = height,
+        };
+    }
 };

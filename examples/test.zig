@@ -14,6 +14,9 @@ fn init(game: *Game) !void {
     game.player_texture = try crown.graphics.loadTextureFromBytes(player_png);
     // game.player_texture = try crown.graphics.loadTextureFromFile("/home/cacti/dev/crownlet/examples/player.png");
 
+    const size = try game.player_texture.getSize();
+    std.debug.print("texture width: {} height: {}\n", .{ size.width, size.height });
+
     game.canvas = try crown.graphics.createRenderTarget(320, 180);
 }
 
