@@ -48,6 +48,21 @@ pub fn setVSync(value: bool) !void {
     }
 }
 
+pub fn setLogicalPresentation(width: i32, height: i32, mode: LogicalRepresentation) !void {
+    const sdl_mode = switch (mode) {
+        .disabled => sdl.SDL_LOGICAL_PRESENTATION_DISABLED,
+        .stretch => sdl.SDL_LOGICAL_PRESENTATION_STRETCH,
+        .letterbox => sdl.SDL_LOGICAL_PRESENTATION_LETTERBOX,
+        .overscan => sdl.SDL_LOGICAL_PRESENTATION_OVERSCAN,
+        .integer_scale => sdl.SDL_LOGICAL_PRESENTATION_INTEGER_SCALE,
+    };
+
+    if (!sdl.SDL_SetRenderLogicalPresentation(state.renderer, width, height, @intCast(sdl_mode))) {
+        std.debug.print("Setting logical presentation failed: {s}\n", .{sdl.SDL_GetError()});
+        return error.SettingLogicalPresentationFailed;
+    }
+}
+
 pub fn createRenderTarget(width: i32, height: i32) !RenderTarget {
     return RenderTarget.init(state.renderer, width, height);
 }
@@ -94,3 +109,11 @@ pub fn setRenderTarget(target: ?RenderTarget) !void {
         return error.SetRenderTargetFailed;
     }
 }
+
+pub const LogicalRepresentation = enum {
+    disabled,
+    stretch,
+    letterbox,
+    overscan,
+    integer_scale,
+};

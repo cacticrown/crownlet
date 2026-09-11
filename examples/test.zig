@@ -18,6 +18,8 @@ fn init(game: *Game) !void {
     std.debug.print("texture width: {} height: {}\n", .{ size.width, size.height });
 
     game.canvas = try crown.graphics.createRenderTarget(320, 180);
+
+    try crown.graphics.setLogicalPresentation(320, 180, .letterbox);
 }
 
 fn update(game: *Game, delta_time: f32) !void {
