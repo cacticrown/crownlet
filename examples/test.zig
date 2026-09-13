@@ -18,8 +18,6 @@ fn init(game: *Game) !void {
     std.debug.print("texture width: {} height: {}\n", .{ size.width, size.height });
 
     game.canvas = try crown.graphics.createRenderTarget(320, 180);
-
-    try crown.graphics.setLogicalPresentation(320, 180, .letterbox);
 }
 
 fn update(game: *Game, delta_time: f32) !void {
@@ -36,17 +34,20 @@ fn update(game: *Game, delta_time: f32) !void {
 }
 
 fn draw(game: *Game) !void {
-    try crown.graphics.setRenderTarget(game.canvas);
-
-    try crown.graphics.clear(crown.graphics.Color.black);
+    try crown.graphics.begin(.{
+        .target = game.canvas,
+    });
+    try crown.graphics.clear(crown.graphics.Color.white);
     try crown.graphics.drawTexture(game.player_texture, game.player_position);
+    try crown.graphics.end();
 
-    try crown.graphics.setRenderTarget(null);
-
+    try crown.graphics.begin(.{
+        .target = null,
+    });
     try crown.graphics.clear(crown.graphics.Color.black);
     try crown.graphics.drawRenderTarget(game.canvas, crown.math.Vector2.init(0, 0));
 
-    try crown.graphics.present();
+    try crown.graphics.end();
 }
 
 fn shutdown(game: *Game) !void {

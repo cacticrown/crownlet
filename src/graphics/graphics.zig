@@ -8,6 +8,9 @@ pub const Texture = @import("texture.zig").Texture;
 pub const RenderTarget = @import("render_target.zig").RenderTarget;
 pub const Color = @import("color.zig").Color;
 
+var begin_called = false;
+var current_texture_filter: TextureFilter = .linear;
+
 pub fn init() !void {
     state.renderer = sdl.SDL_CreateRenderer(state.window, null) orelse {
         std.debug.print("Renderer Error: {s}\n", .{sdl.SDL_GetError()});
@@ -20,6 +23,9 @@ pub fn deinit() void {
 }
 
 pub fn clear(color: crown.graphics.Color) !void {
+    if (!begin_called) {
+        return error.BeginNotCalled;
+    }
     if (!sdl.SDL_SetRenderDrawColor(state.renderer, color.r, color.g, color.b, color.a)) {
         std.debug.print("Clear failed: {s}\n", .{sdl.SDL_GetError()});
         return error.ClearFailed;
@@ -30,7 +36,42 @@ pub fn clear(color: crown.graphics.Color) !void {
     }
 }
 
-pub fn present() !void {
+pub const PassOptions = struct {
+    target: ?RenderTarget = null,
+    texture_filter: TextureFilter = TextureFilter.linear,
+};
+
+pub const TextureFilter = enum {
+    nearest,
+    linear,
+};
+
+pub fn begin(options: PassOptions) !void {
+    if (begin_called) {
+        return error.BeginAlreadyCalled;
+    }
+    begin_called = true;
+
+    current_texture_filter = options.texture_filter;
+
+    const target_texture = if (options.target) |t| t.texture else null;
+
+    if (!sdl.SDL_SetRenderTarget(state.renderer, target_texture)) {
+        std.debug.print("Setting Render Target failed: {s}\n", .{sdl.SDL_GetError()});
+        return error.SetRenderTargetFailed;
+    }
+}
+
+pub fn end() !void {
+    if (!begin_called) {
+        return error.BeginNotCalled;
+    }
+    begin_called = false;
+
+    if (sdl.SDL_GetRenderTarget(state.renderer) != null) {
+        return;
+    }
+
     if (!sdl.SDL_RenderPresent(state.renderer)) {
         std.debug.print("Present failed: {s}\n", .{sdl.SDL_GetError()});
         return error.PresentFailed;
@@ -88,7 +129,21 @@ pub fn drawRenderTarget(renderTarget: RenderTarget, position: crown.math.Vector2
 }
 
 fn drawSdlTexture(texture: *sdl.SDL_Texture, position: crown.math.Vector2) !void {
+    if (!begin_called) {
+        return error.BeginNotCalled;
+    }
+
     const renderer = state.renderer;
+
+    const sdl_texture_filter = switch (current_texture_filter) {
+        .nearest => sdl.SDL_SCALEMODE_NEAREST,
+        .linear => sdl.SDL_SCALEMODE_LINEAR,
+    };
+
+    if (!sdl.SDL_SetTextureScaleMode(texture, sdl_texture_filter)) {
+        std.debug.print("Setting Texture Filter failed: {s}\n", .{sdl.SDL_GetError()});
+        return error.SettingsTextureFilterFailed;
+    }
 
     var w: f32 = undefined;
     var h: f32 = undefined;
@@ -99,14 +154,6 @@ fn drawSdlTexture(texture: *sdl.SDL_Texture, position: crown.math.Vector2) !void
     if (!sdl.SDL_RenderTexture(renderer, texture, null, &dst)) {
         std.debug.print("Rendering Texture failed: {s}\n", .{sdl.SDL_GetError()});
         return error.RenderTextureFailed;
-    }
-}
-
-pub fn setRenderTarget(target: ?RenderTarget) !void {
-    const tex_ptr = if (target) |t| t.texture else null;
-    if (!sdl.SDL_SetRenderTarget(state.renderer, tex_ptr)) {
-        std.debug.print("Setting RenderTarget failed: {s}\n", .{sdl.SDL_GetError()});
-        return error.SetRenderTargetFailed;
     }
 }
 
