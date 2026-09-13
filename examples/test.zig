@@ -4,10 +4,16 @@ const crown = @import("crownlet");
 const player_png = @embedFile("player.png");
 const player_speed = 180;
 
+const camera_speed = 200;
+const zoom_speed = 1.0;
+
 const Game = struct {
     player_texture: crown.graphics.Texture = undefined,
     player_position: crown.math.Vector2 = .init(0, 0),
     canvas: crown.graphics.RenderTarget = undefined,
+    camera: crown.graphics.Camera = .{
+        .offset = .init(320, 180),
+    },
 };
 
 fn init(game: *Game) !void {
@@ -31,22 +37,54 @@ fn update(game: *Game, delta_time: f32) !void {
     if (crown.input.keyboard.keyJustPressed(.f11)) {
         try crown.window.toggleFullscreen();
     }
+
+    if (crown.input.keyboard.keyPressed(.w)) {
+        game.camera.position.y -= camera_speed * delta_time;
+    }
+    if (crown.input.keyboard.keyPressed(.s)) {
+        game.camera.position.y += camera_speed * delta_time;
+    }
+    if (crown.input.keyboard.keyPressed(.a)) {
+        game.camera.position.x -= camera_speed * delta_time;
+    }
+    if (crown.input.keyboard.keyPressed(.d)) {
+        game.camera.position.x += camera_speed * delta_time;
+    }
+
+    if (crown.input.keyboard.keyPressed(.q)) {
+        game.camera.zoom -= zoom_speed * delta_time;
+    }
+    if (crown.input.keyboard.keyPressed(.e)) {
+        game.camera.zoom += zoom_speed * delta_time;
+    }
+
+    if (game.camera.zoom < 0.1) {
+        game.camera.zoom = 0.1;
+    }
 }
 
 fn draw(game: *Game) !void {
-    try crown.graphics.begin(.{
-        .target = game.canvas,
-    });
-    try crown.graphics.clear(crown.graphics.Color.white);
-    try crown.graphics.drawTexture(game.player_texture, game.player_position);
-    try crown.graphics.end();
+    // try crown.graphics.begin(.{
+    //     .target = game.canvas,
+    // });
+    // try crown.graphics.clear(crown.graphics.Color.white);
+    // try crown.graphics.drawTexture(game.player_texture, game.player_position);
+    // try crown.graphics.end();
+
+    // try crown.graphics.begin(.{
+    //     .target = null,
+    // });
+    // try crown.graphics.clear(crown.graphics.Color.black);
+    // try crown.graphics.drawRenderTarget(game.canvas, crown.math.Vector2.init(0, 0));
+
+    // try crown.graphics.end();
 
     try crown.graphics.begin(.{
-        .target = null,
+        .camera = game.camera,
+        .texture_filter = .nearest,
     });
     try crown.graphics.clear(crown.graphics.Color.black);
-    try crown.graphics.drawRenderTarget(game.canvas, crown.math.Vector2.init(0, 0));
-
+    try crown.graphics.drawTexture(game.player_texture, game.player_position);
     try crown.graphics.end();
 }
 

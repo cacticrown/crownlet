@@ -7,9 +7,11 @@ const state = @import("../internal/state.zig");
 pub const Texture = @import("texture.zig").Texture;
 pub const RenderTarget = @import("render_target.zig").RenderTarget;
 pub const Color = @import("color.zig").Color;
+pub const Camera = @import("camera.zig").Camera;
 
 var begin_called = false;
 var current_texture_filter: TextureFilter = .linear;
+var current_camera: ?Camera = null;
 
 pub fn init() !void {
     state.renderer = sdl.SDL_CreateRenderer(state.window, null) orelse {
@@ -39,6 +41,7 @@ pub fn clear(color: crown.graphics.Color) !void {
 pub const PassOptions = struct {
     target: ?RenderTarget = null,
     texture_filter: TextureFilter = TextureFilter.linear,
+    camera: ?Camera = null,
 };
 
 pub const TextureFilter = enum {
@@ -53,6 +56,7 @@ pub fn begin(options: PassOptions) !void {
     begin_called = true;
 
     current_texture_filter = options.texture_filter;
+    current_camera = options.camera;
 
     const target_texture = if (options.target) |t| t.texture else null;
 
@@ -145,16 +149,41 @@ fn drawSdlTexture(texture: *sdl.SDL_Texture, position: crown.math.Vector2) !void
         return error.SettingsTextureFilterFailed;
     }
 
-    var w: f32 = undefined;
-    var h: f32 = undefined;
-    _ = sdl.SDL_GetTextureSize(texture, &w, &h);
+    var width: f32 = undefined;
+    var height: f32 = undefined;
+    _ = sdl.SDL_GetTextureSize(texture, &width, &height);
 
-    const dst = sdl.SDL_FRect{ .x = position.x, .y = position.y, .w = w, .h = h };
+    var destination = sdl.SDL_FRect{ .x = position.x, .y = position.y, .w = width, .h = height };
 
-    if (!sdl.SDL_RenderTexture(renderer, texture, null, &dst)) {
+    if (current_camera) |cam| {
+        const screen_pos = worldToScreen(position, cam);
+        destination = sdl.SDL_FRect{
+            .x = screen_pos.x,
+            .y = screen_pos.y,
+            .w = width * cam.zoom,
+            .h = height * cam.zoom,
+        };
+    } else {
+        destination = sdl.SDL_FRect{ .x = position.x, .y = position.y, .w = width, .h = height };
+    }
+
+    if (!sdl.SDL_RenderTexture(renderer, texture, null, &destination)) {
         std.debug.print("Rendering Texture failed: {s}\n", .{sdl.SDL_GetError()});
         return error.RenderTextureFailed;
     }
+}
+
+fn worldToScreen(world_pos: crown.math.Vector2, camera: Camera) crown.math.Vector2 {
+    const relative_x = world_pos.x - camera.position.x;
+    const relative_y = world_pos.y - camera.position.y;
+
+    const scaled_x = relative_x * camera.zoom;
+    const scaled_y = relative_y * camera.zoom;
+
+    return .{
+        .x = scaled_x + camera.offset.x,
+        .y = scaled_y + camera.offset.y,
+    };
 }
 
 pub const LogicalRepresentation = enum {
