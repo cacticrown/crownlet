@@ -46,6 +46,17 @@ pub fn build(b: *std.Build) void {
 
     b.installArtifact(lib);
 
+    // docs
+    const docs_step = b.step("docs", "Emit library documentation");
+
+    const docs_install = b.addInstallDirectory(.{
+        .source_dir = lib.getEmittedDocs(),
+        .install_dir = .prefix,
+        .install_subdir = "docs",
+    });
+
+    docs_step.dependOn(&docs_install.step);
+
     // examples
 
     const examples = &[_]struct {
