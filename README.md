@@ -1,5 +1,5 @@
 # crownlet
- A dead simple video game library written in zig
+ A dead simple video 2D game library written in zig
 
 [![License](https://img.shields.io/github/license/cacticrown/crownlet)](LICENSE)
 [![Zig Version](https://img.shields.io/badge/zig-0.16.0-orange.svg)](https://ziglang.org/)
