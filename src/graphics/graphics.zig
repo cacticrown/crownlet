@@ -15,7 +15,7 @@ var current_camera: ?Camera = null;
 
 pub fn init() !void {
     state.renderer = sdl.SDL_CreateRenderer(state.window, null) orelse {
-        std.debug.print("Renderer Error: {s}\n", .{sdl.SDL_GetError()});
+        std.debug.print("Renderer creation failed: {s}\n", .{sdl.SDL_GetError()});
         return error.RendererCreationFailed;
     };
 }
@@ -29,7 +29,7 @@ pub fn clear(color: crown.graphics.Color) !void {
         return error.BeginNotCalled;
     }
     if (!sdl.SDL_SetRenderDrawColor(state.renderer, color.r, color.g, color.b, color.a)) {
-        std.debug.print("Clear failed: {s}\n", .{sdl.SDL_GetError()});
+        std.debug.print("Setting clear-color failed: {s}\n", .{sdl.SDL_GetError()});
         return error.ClearFailed;
     }
     if (!sdl.SDL_RenderClear(state.renderer)) {
@@ -90,21 +90,6 @@ pub fn setVSync(value: bool) !void {
 
     if (!sdl.SDL_SetRenderVSync(state.renderer, value_int)) {
         return error.SettingVSyncFailed;
-    }
-}
-
-pub fn setLogicalPresentation(width: i32, height: i32, mode: LogicalRepresentation) !void {
-    const sdl_mode = switch (mode) {
-        .disabled => sdl.SDL_LOGICAL_PRESENTATION_DISABLED,
-        .stretch => sdl.SDL_LOGICAL_PRESENTATION_STRETCH,
-        .letterbox => sdl.SDL_LOGICAL_PRESENTATION_LETTERBOX,
-        .overscan => sdl.SDL_LOGICAL_PRESENTATION_OVERSCAN,
-        .integer_scale => sdl.SDL_LOGICAL_PRESENTATION_INTEGER_SCALE,
-    };
-
-    if (!sdl.SDL_SetRenderLogicalPresentation(state.renderer, width, height, @intCast(sdl_mode))) {
-        std.debug.print("Setting logical presentation failed: {s}\n", .{sdl.SDL_GetError()});
-        return error.SettingLogicalPresentationFailed;
     }
 }
 
@@ -185,11 +170,3 @@ fn worldToScreen(world_pos: crown.math.Vector2, camera: Camera) crown.math.Vecto
         .y = scaled_y + camera.offset.y,
     };
 }
-
-pub const LogicalRepresentation = enum {
-    disabled,
-    stretch,
-    letterbox,
-    overscan,
-    integer_scale,
-};
