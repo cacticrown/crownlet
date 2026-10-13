@@ -2,7 +2,7 @@
  A dead simple 2D video game library written in zig
 
 [![License](https://img.shields.io/github/license/cacticrown/crownlet)](LICENSE)
-[![Zig Version](https://img.shields.io/badge/zig-0.16.0-orange.svg)](https://ziglang.org/)
+[![Zig Version](https://img.shields.io/badge/zig-0.17.0-orange.svg)](https://ziglang.org/)
 [![Documentation](https://img.shields.io/badge/docs-online-blue.svg)](https://crownlet.github.io/)
 
 ## Example
