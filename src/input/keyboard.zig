@@ -3,8 +3,8 @@ const sdl = @import("sdl");
 
 pub const Keycode = @import("keycode.zig").Keycode;
 
-var current_keyboard_state: [512]bool = [_]bool{false} ** 512;
-var previous_keyboard_state: [512]bool = [_]bool{false} ** 512;
+var current_keyboard_state: [512]bool = @splat(false);
+var previous_keyboard_state: [512]bool = @splat(false);
 
 pub fn update() void {
     previous_keyboard_state = current_keyboard_state;
